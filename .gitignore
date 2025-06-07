@@ -1,0 +1,7 @@
+.venv/ 
+certificates/
+.ipynb_checkpoints/
+.vscode/
+.DS_Store
+logs/
+*.pth
