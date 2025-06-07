@@ -1,1 +1,68 @@
-# gnn_playground
+# GNN-Playground
+
+This is a **hands-on sandbox** for experimenting with Graph Neural Networks (GNNs) on tiny cpu-friendly datasets.
+You can customize architecture and training hyperparameters in a single YAML file and then compare two models side-by-side. 
+The repository provides you with 3 alternative to proceed:
+
+- **Jupyter Notebook** (`notebooks/playground.ipynb`)
+- **Terminal Script** (`gnn_competition.py --config configs/example.yaml`)
+- **Textual User Interface (TUI)** (`gnn_competition.py --tui`)
+
+--- 
+
+## 🌟 Features 
+- **Two small datasets** (KarateClub & MUTAG) for graph and node-based prediction tasks.
+- **Multiple layer types**: GCN, GAT, GraphSAGE, GIN
+- **Live plots** of loss and accuracy
+- **PDF certificates** summarizing your interactions with the demo and results.
+- **CPU-only** (supports `cpu`, `cuda` or `mps`)
+- **Few dependancies** (PyTorch, PyG, pyyaml, matplotlib, textual, livelossplot, rich, fpdf2)
+
+--- 
+
+## 🚀 Quickstart
+
+1. **Clone & install**
+```bash
+# Load repository
+git clone https://github.com/jlederer1/gnn_playground.git
+cd gnn_playground
+# create and activate new environment
+python3 -m venv .venv
+source .venv/bin/activate       # on Linux/MaxOS
+.\.venv\Scrips\activate         # in Windows shell
+# Install dependancies
+pip install -r requirements.txt
+```
+2. **Edit a new configuration**
+```bash
+python utils/new_experiment.py
+# then adjust dataset, task, layers, lr, ...
+```
+3. **Run in notebook**
+```bash
+jupyter notebook notebooks/playground.ipynb
+```
+4. **Run via Command Line Interface (CLI)**
+```bash
+python gnn_competition.py --config configs/example.yaml
+```
+`--config` is optional, latest experiment config is chosen at default.
+
+5. **Run in TUI**
+```bash
+python gnn_competition.py --tui
+```
+After completion, check `certificates/` to view a summary of the results of your interactions.
+
+---
+
+## 📂 Project structure
+
+...
+
+--- 
+
+## 🤝 Contributing 
+
+Feel free to open issues and PRs to add new datasets, layers and ideas! 
