@@ -10,6 +10,9 @@ import torch
 from torch.optim import Adam, SGD 
 from torch_geometric.loader import DataLoader
 from livelossplot import PlotLosses  
+from livelossplot.outputs import MatplotlibPlot
+from tqdm import trange
+import matplotlib.pyplot as plt
 
 
 OPTIMIZERS = {
@@ -79,8 +82,10 @@ def train_model(
     else:
         raise ValueError(f"Supported optimizers are {list(OPTIMIZERS.keys())}.")
     
+    # Use livelossplot only for CPU, GPUs dont like it...
     if device == 'cpu':
-        liveloss = PlotLosses()  # Use livelossplot only for CPU
+        mpl_plot = MatplotlibPlot() 
+        liveloss = PlotLosses(outputs=[mpl_plot]) # We dont want unneccessary console outputs... 
 
     history = {
         'loss': [],
@@ -148,9 +153,11 @@ def train_model(
                 logs['val_accuracy'] = val_accuracy  
             
             liveloss.update(logs)
+            plt.close('all') # delete previous figure
             liveloss.draw()
 
         if epoch % 10 == 0 or epoch == epochs:
+        
             msg = f"Epoch {epoch+1:03d}/{epochs}, Loss: {epoch_loss:.4f}, Accuracy: {train_accuracy:.4f}"
             if val_loss is not None:
                 msg += f", Val Loss: {val_loss:.4f}, Val Accuracy: {val_accuracy:.4f}"

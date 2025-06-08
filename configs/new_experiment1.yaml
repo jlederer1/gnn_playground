@@ -5,21 +5,21 @@
 # Dataset & tasks
 data:
   # Note: Dataset and task must be compatible!                            (TODO: add checks or automation)
-  name: MUTAG            # KarateClub | MUTAG   
-  task: graph            # graph | node 
+  name: KarateClub       # KarateClub | MUTAG   
+  task: node            # graph | node 
   device: cpu            # cuda | mps | cpu | auto (TODO)
   random_seed: 42 
 
 # Model architecture
 model:
-  num_layers: 3           # Number of GNN layers
-  hidden_dim: 64          # Size of hidden layers embeddings
+  num_layers: 2           # Number of GNN layers
+  hidden_dim: 128         # Size of hidden layers embeddings
   dropout_value: 0.5      # Dropout rate for regularization 
-  layer_type: GCN         # GCN | GAT | GraphSAGE | GIN
+  layer_type: GIN         # GCN | GAT | GraphSAGE | GIN
   aggregator: mean        # mean | sum | max (only for GraphSAGE)
-  update_func: MLP        # MLP  | BLSTM (only for GIN)                   (TODO: add Attention)
-  glob_pooler: sum        # mean | add | max (for graph tasks)
-  activation: default     # relu | leaky_relu | sigmoid | tanh | default (according to original papers)
+  update_func: BLSTM      # MLP  | BLSTM (only for GIN)                   (TODO: add Attention)
+  glob_pooler: sum        # mean | add | max (only for graph tasks)
+  activation: leaky_relu  # relu | leaky_relu | sigmoid | tanh | default (according to original papers)
 
 optimizer: 
   type: Adam              # Adam | SGD 
