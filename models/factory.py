@@ -21,9 +21,3 @@ def get_layer(name, **kwargs):
     Retrieve a GNN layer instance by name. 
     """
     return LAYERS[name](**kwargs)
-
-# In our models we will call:
-# self.layers = torch.nn.ModuleList([
-#     get_layer(config.layer_type, in_dim, out_dim, **config.layer_args)
-#     for _ in range(config.layers)
-# ])
