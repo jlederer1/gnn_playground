@@ -6,3 +6,5 @@ certificates/
 logs/
 *.pth
 data/
+trash.py
+trash.ipynb

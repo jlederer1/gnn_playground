@@ -44,7 +44,7 @@ def load_node_dataset(name, root='data/', seed=None, store=False):
     num_nodes = data.num_nodes
     indices = list(range(num_nodes))
     random.shuffle(indices)
-    split = int(0.8 * num_nodes)  # 80% for training, 20% for testing
+    split = int(0.5 * num_nodes)  # 80% for training, 20% for testing
     train_indices = indices[:split]
     test_indices = indices[split:]
     data.train_mask = torch.zeros(num_nodes, dtype=torch.bool)
@@ -105,7 +105,7 @@ def load_graph_dataset(name, root='data/', split_ratio=0.8, batch_size=32, shuff
         train_dataset,
         batch_size=batch_size, 
         shuffle=shuffle,
-        generator=torch.Generator().manual_seed(seed)
+        generator=torch.Generator().manual_seed(seed) if seed else None
     ) 
     test_loader = DataLoader(
         test_dataset, 
