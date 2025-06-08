@@ -20,4 +20,16 @@ def get_layer(name, **kwargs):
     """
     Retrieve a GNN layer instance by name. 
     """
-    return LAYERS[name](**kwargs)
+    # Aggregator ignored except for GraphSAGE
+    if name != "GraphSAGE":
+        kwargs.pop("aggregator", None)
+    # Remove GIN-only kwargs
+    if name != "GIN":
+        kwargs.pop("update_func", None)
+    # Instantiate
+    try:
+        LayerClass = LAYERS[name]
+    except KeyError:
+        raise ValueError(f"Use one of {list(LAYERS.keys())} for layer_type.")
+
+    return LayerClass(**kwargs)

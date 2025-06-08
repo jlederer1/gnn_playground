@@ -33,10 +33,11 @@ class GNNModel(nn.Module):
         glob_pooler (str): Global pooling method ('mean', 'max', 'add').
         task (str): Task type ('node' or 'graph').
     """
-    def __init__(self, in_dim, hidden_dim, out_dim, num_layers, layer_type, dropout_value, glob_pooler, task, **layer_kwrds):
+    def __init__(self, in_dim, hidden_dim, out_dim, num_layers, layer_type, dropout_value, glob_pooler, task, activation="default", **layer_kwrds):
         super().__init__()
         self.task = task
         self.dropout_value = dropout_value
+        self.activation = activation
 
         # Collect dimensionalities of the node features at each layer
         dims = [in_dim] + [hidden_dim] * num_layers # only head maps to out_dim
@@ -47,6 +48,7 @@ class GNNModel(nn.Module):
                 in_dim=dims[i], 
                 out_dim=dims[i + 1], 
                 dropout_value=dropout_value,
+                activation=self.activation,
                 **layer_kwrds)
             for i in range(num_layers)
         ])
