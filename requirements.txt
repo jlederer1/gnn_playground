@@ -3,6 +3,7 @@ torch-geometric>=2.3
 PyYAML>=6
 rich>=13
 textual>=0.18
-livelossplot>=0.6
+livelossplot>=0.5.6
 matplotlib>=3.5
 fpdf2>=2.6
+ipykernel

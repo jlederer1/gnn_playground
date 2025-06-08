@@ -5,3 +5,4 @@ certificates/
 .DS_Store
 logs/
 *.pth
+data/
