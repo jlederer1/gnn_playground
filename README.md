@@ -34,14 +34,15 @@ source .venv/bin/activate       # on Linux/MaxOS
 # Install dependancies
 pip install -r requirements.txt
 ```
-2. **Edit a new configuration**
-```bash
-python utils/new_experiment.py
-# then adjust dataset, task, layers, lr, ...
-```
 3. **Run in notebook**
 ```bash
 jupyter notebook notebooks/playground.ipynb
+```
+3. **Edit a new configuration**
+```bash
+# copies example config and creates new_experiment_XX.yaml
+python utils/new_experiment.py 
+# then adjust hyperparameters like dataset, task, layers, lr, etc.
 ```
 4. **Run via Command Line Interface (CLI)**
 ```bash
