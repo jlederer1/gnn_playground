@@ -52,6 +52,25 @@ def merge_configs(default, custom):
             merged[key] = value
     return merged
 
+def resolve_device(device):
+    """
+    Turns "auto" into "cuda", "mps" or "cpu" based on availability.
+    """
+    if device == "auto":
+        # yield correct device
+        import torch
+        return (
+            "cuda" if torch.cuda.is_available() 
+            else "mps" if torch.backends.mps.is_available() 
+            else "cpu"
+        )
+    # Or keep as is
+    elif device in ["cpu", "cuda", "mps"]:
+        return device
+    # Sanity
+    else: # device not in ["cpu", "cuda", "mps"]:
+        raise ValueError(f"Use 'cpu', 'cuda', 'mps' or 'auto' for data.device.")
+
 def load_config(config_path = "configs/example.yaml"):
     """
     Loads and validates the experiment configuration from a YAML file.
@@ -82,16 +101,7 @@ def load_config(config_path = "configs/example.yaml"):
     if merged_config["optimizer"]["type"] not in ["Adam", "SGD"]:
         raise ValueError(f"Use 'Adam' or 'SGD' for optimizer.type.")
     
-    # Auto device selection
-    device = merged_config["data"]["device"]
-    if device == "auto":
-        import torch
-        merged_config["data"]["device"] = (
-            "cuda" if torch.cuda.is_available() 
-            else "mps" if torch.backends.mps.is_available() 
-            else "cpu"
-        )
-    elif device not in ["cpu", "cuda", "mps"]:
-        raise ValueError(f"Use 'cpu', 'cuda', 'mps' or 'auto' for data.device.")
+    # Optional auto device selection
+    merged_config["data"]["device"] = resolve_device(merged_config["data"]["device"])
     
     return merged_config

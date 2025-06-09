@@ -7,15 +7,17 @@ It displays live tracking metrics and calls the certificate generator in the end
 """
 
 import argparse, glob, os
-from utils.config import load_config
+from utils.config import load_config, resolve_device
 from utils.data import load_node_dataset, load_graph_dataset
 from models.net import GNNModel
 from utils.train import train_model
 from torch_geometric.loader import DataLoader
 
 def main():
+    # Parse commands to select script mode (CLI + config or TUI)
     parser = argparse.ArgumentParser(description="GNN-Playground CLI")
     parser.add_argument("--config", help="path to YAML config")
+    parser.add_argument("--tui", action="store_true", help="TUI interactive config selection")
     args = parser.parse_args()
 
     if args.config is None:
@@ -25,8 +27,24 @@ def main():
         print(f"Using latest config: {args.config}")
 
     # DATA
-    config = load_config(args.config)
+    if args.tui:
+        # Construct config from TUI
+        from utils.tui import run_tui
+        config = run_tui()  # needs to return same dict as load_config
+        # Sanity
+        if config is None:
+            print("TUI cancelled. No config returned.")
+            return
 
+    else:          
+        if args.config is None: 
+            # find all .yaml in configs/ and choose the newest by last modification time
+            files = glob.glob("configs/*.yaml")
+            args.config = max(files, key=os.path.getmtime)
+            print(f"Using latest config: {args.config}") 
+        config = load_config(args.config)
+
+    # Load associated dataset
     if config["data"]["task"] == "node":
         data = load_node_dataset(config["data"]["name"], seed=config["data"]["random_seed"])
         train_loader = DataLoader([data], batch_size=1, shuffle=False)
