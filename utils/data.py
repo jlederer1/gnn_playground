@@ -82,7 +82,7 @@ def load_graph_dataset(name, root='data/', split_ratio=0.8, batch_size=32, shuff
         if name == 'MUTAG':
             dataset = TUDataset(root=root, name=name)  
         else:
-            raise ValueError(f"Use supported dataset (MUTAG, ENZYMES)")
+            raise ValueError(f"Use supported dataset (MUTAG)") # TODO: add ENZYMES for example
         
         if seed:
             set_seed(seed)
