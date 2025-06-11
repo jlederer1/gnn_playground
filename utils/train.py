@@ -32,11 +32,16 @@ def batch_accuracy(model, output, batch):
         correct = (predictions[mask] == batch.y[mask]).sum().item()
         total = int(mask.sum().item())  # Number of nodes in the mask
     elif model.task == 'graph':
-        # Graph-level accuracy - binary
-        logits = output.view(-1)  # flat
-        predictions = (torch.sigmoid(logits) > 0.5).long() # Convert to binary predictions
-        correct = (predictions == batch.y.view(-1)).sum().item()
-        total = batch.y.numel()  # Total number of graphs
+        if output.shape[1] == 1: # Graph-level accuracy - binary
+            logits = output.view(-1)  # flat
+            predictions = (torch.sigmoid(logits) > 0.5).long() # Convert to binary predictions
+            correct = (predictions == batch.y.view(-1)).sum().item()
+            total = batch.y.numel()  # Total number of graphs
+        else:  # Graph-level accuracy - multiclass
+            logits = output.view(-1, output.shape[1]) # [batch_size, num_classes]
+            predictions = logits.argmax(dim=1)
+            correct = (predictions == batch.y.view(-1)).sum().item()
+            total = batch.y.numel()
     else:
         raise ValueError(f"Unsupported task type: {model.task}")
     

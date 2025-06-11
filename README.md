@@ -11,7 +11,7 @@ The repository provides you with 3 alternative to proceed:
 --- 
 
 ## 🌟 Features 
-- **Two small datasets** (KarateClub & MUTAG) for graph and node-based prediction tasks.
+- **Three small datasets** (MUTAG, ENZYME & KarateClub) for graph and node-based prediction tasks.
 - **Multiple layer types**: GCN, GAT, GraphSAGE, GIN
 - **Live plots** of loss and accuracy
 - **PDF certificates** summarizing your interactions with the demo and results.
@@ -54,7 +54,8 @@ python gnn_competition.py --config configs/example.yaml
 ```bash
 python gnn_competition.py --tui
 ```
-After completion, check `certificates/` to view a summary of the results of your interactions.
+Note: The TUI is not supported for jupyter notebook.
+After completion you can check `certificates/` to view a summary of the results of your interactions :)
 
 ---
 
