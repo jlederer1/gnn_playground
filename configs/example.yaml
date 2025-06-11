@@ -5,7 +5,7 @@
 # Dataset & tasks
 data:
   # Note: Dataset and task must be compatible!                            (TODO: add checks or automation)
-  name: MUTAG            # KarateClub | MUTAG   
+  name: MUTAG            # KarateClub | MUTAG | ENZYMES  
   task: graph            # graph | node 
   device: cpu            # cuda | mps | cpu | auto (TODO)
   random_seed: 42 

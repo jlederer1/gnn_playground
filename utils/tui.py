@@ -4,15 +4,29 @@
 Implements the Text-based User Interface (TUI) for the GNN Playground.
 
 It incrementally covers: 
-- data.name [KarateClub | MUTAG]
+- data.name [KarateClub | MUTAG | ENZYMES]
 - data.task [node | graph]
 - data.device [auto | cuda | mps | cpu] (TODO: implement and test cuda and mps versions)
 - data.random_seed [int]
-The rest of the config will folllow later... (TODO)
+- model.num_layers [int]
+- model.hidden_dim [int]
+- model.dropout_value [float]
+- model.layer_type [GCN | GAT | GraphSAGE | GIN]
+- model.aggregator [mean | sum | max] (only for GraphSAGE)
+- model.update_func [MLP | BLSTM] (only for GIN)
+- model.glob_pooler [mean | add | max] (only for graph tasks)
+- model.activation [default | relu | leaky_relu | sigmoid | tanh]
+- optimizer.type [Adam | SGD]
+- optimizer.lr [float]
+- optimizer.weight_decay [float]
+- training.batch_size [int]
+- training.epochs [int]
+- training.val_split [float]
 
 Press X to exit and retur the configuration.
 """
 
+import glob, os
 from pathlib import Path
 from rich.syntax import Syntax # For syntax highlighting of the YAML block
 from textual.app import App, ComposeResult
@@ -24,8 +38,15 @@ from textual.containers import Vertical # Stacks layout container top to bottom
 from textual.containers import  Horizontal # Stacks layout container left to right
 import yaml
 
-from utils.config import DEFAULT, merge_configs, merge_configs, resolve_device
+from utils.config import DEFAULT, merge_configs, merge_configs, resolve_device, load_config
 
+
+def get_latest_config(path="configs/*.yaml"):
+    files = glob.glob(path)
+    if files:
+        latest = max(files, key=os.path.getmtime)
+        return load_config(latest)
+    return None
 
 def yaml_block(config, active=None):
     """
@@ -77,7 +98,7 @@ class YamlPreview(Static):
 class TUIInterface(App): 
     CSS = """
     Screen { align: center middle;}
-    #panel { border: round $accent; width: 100; height: 30; }
+    #panel { border: round $accent; width: 100; height: 40; }
     #buttons { dock: bottom; height: 3; content-align: center middle; }
     Select { border: round $accent; width: 20; padding: 1; }
     Input { border: round $accent; width: 20; padding: 1; }
@@ -103,10 +124,11 @@ class TUIInterface(App):
     def __init__(self):
         """TUI Setup"""
         super().__init__()
-        self.config = merge_configs(DEFAULT, {})  # Start with default config
+        # self.config = merge_configs(DEFAULT, {})  # Start with default config
+        self.config = get_latest_config() 
 
         # Options for Select widgets
-        self.datasets = [("KarateClub", "KarateClub"), ("MUTAG", "MUTAG")]
+        self.datasets = [("KarateClub", "KarateClub"), ("MUTAG", "MUTAG"), ("ENZYMES", "ENZYMES")]
         self.tasks = [("node", "node"), ("graph", "graph")] # always ("label", "value") pairs
         self.devices = [("auto", "auto"), ("cuda", "cuda"), ("mps", "mps"), ("cpu", "cpu")]
         self.layer_types = [("GCN", "GCN"), ("GAT", "GAT"), ("GraphSAGE", "GraphSAGE"), ("GIN", "GIN")] 
@@ -121,19 +143,19 @@ class TUIInterface(App):
         """Declare simple sequential TUI hirarchy"""
         with Vertical(id="panel", classes="panel"):
             # Title
-            yield Static("GNN Playground Configuration", classes="title")
+            yield Static("GNN Playground Configuration \n('Tab' or click to navigate, 'enter' to modify & type to input)\n", classes="title")
 
             # Dataset and Task selection
             with Horizontal():
                 yield Static("Dataset:", classes="static")
-                yield Select(options=self.datasets, id="pick_dataset", classes="label")
+                yield Select(options=self.datasets, prompt="Dataset:", id="pick_dataset", classes="label")
                 yield Static("Task:", classes="static")
-                yield Select(options=self.tasks, id="pick_task", classes="label")
+                yield Select(options=self.tasks, prompt="Task:", id="pick_task", classes="label")
 
             # Device and Seed selection
             with Horizontal():
                 yield Static("Device:", classes="static")
-                yield Select(options=self.devices, id="pick_device", classes="label")
+                yield Select(options=self.devices, prompt="Device:", id="pick_device", classes="label")
                 yield Static("Random Seed:", classes="static")
                 yield Input(value=str(self.config["data"]["random_seed"]), id="pick_seed", classes="unit")
             
@@ -149,24 +171,24 @@ class TUIInterface(App):
             # Layer type specifications
             with Horizontal():
                 yield Static("Layer Type:", classes="static")
-                yield Select(options=self.layer_types, id="pick_layer_type", classes="label")
+                yield Select(options=self.layer_types, prompt="Layer Type:", id="pick_layer_type", classes="label")
                 
                 yield Static("Aggregator:", classes="static")
-                yield Select(options=self.aggregators, id="pick_aggregator", classes="label")
+                yield Select(options=self.aggregators, prompt="Aggregator:", id="pick_aggregator", classes="label")
                 yield Static("Update Func:", classes="static")
-                yield Select(options=self.update_funcs, id="pick_update_func", classes="label")
+                yield Select(options=self.update_funcs, prompt="Update func:", id="pick_update_func", classes="label")
             
             # Pooling and activation
             with Horizontal():
                 yield Static("Glob. Pooler:", classes="static")
-                yield Select(options=self.glob_poolers, id="pick_glob_pooler", classes="label")
+                yield Select(options=self.glob_poolers, prompt="Glob. Pooler:", id="pick_glob_pooler", classes="label")
                 yield Static("Activation:", classes="static")
-                yield Select(options=self.activations, id="pick_activation", classes="label"    )
+                yield Select(options=self.activations, prompt="Activation:", id="pick_activation", classes="label"    )
             
             # Optimizer 
             with Horizontal():
                 yield Static("Optimizer:", classes="static")
-                yield Select(options=self.optimizers, id="pick_optimizer", classes="label")
+                yield Select(options=self.optimizers, prompt="Optimizer:", id="pick_optimizer", classes="label")
                 yield Static("Learning Rate:", classes="static")
                 yield Input(value=str(self.config["optimizer"]["lr"]), id="pick_lr", classes="unit")
                 yield Static("Weight Decay:", classes="static")
@@ -187,8 +209,8 @@ class TUIInterface(App):
 
             # Action buttons 
             with Horizontal(id="buttons"):
-                yield Button("X to Train", id="btn_train", variant="success")
-                yield Button("ESC to cancel", id="btn_cancel", variant="error")
+                yield Button("'X' to Train", id="btn_train", variant="success")
+                yield Button("'ESC' to cancel", id="btn_cancel", variant="error")
     
     def on_mount(self):
         """Initialize TUI with default values"""

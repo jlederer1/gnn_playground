@@ -23,7 +23,7 @@ DEFAULT = {
         "layer_type": "GCN",
         "aggregator": "mean",
         "glob_pooler": "mean",
-        "activation": "default", # according to papers of GNN layers
+        "activation": "default", # handled according to papers of GNN layers
         "update_func": "MLP" # only for GINConv layer
     },
     "optimizer": {
@@ -90,8 +90,8 @@ def load_config(config_path = "configs/example.yaml"):
     merged_config = merge_configs(DEFAULT, custom_config)
 
     # Validation checks 
-    if merged_config["data"]["name"] not in ["MUTAG", "KarateClub"]:
-        raise ValueError(f"Use 'MUTAG' or 'KarateClub' for data.name.")
+    if merged_config["data"]["name"] not in ["MUTAG", "KarateClub", "ENZYMES"]:
+        raise ValueError(f"Use 'MUTAG', 'ENZYMES or 'KarateClub' for data.name.")
     if merged_config["data"]["task"] not in ["node", "graph"]:
         raise ValueError(f"Use 'node' or 'graph' for data.task.")
     if merged_config["model"]["layer_type"] not in ["GCN", "GAT", "GraphSAGE", "GIN"]:

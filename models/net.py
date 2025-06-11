@@ -97,7 +97,11 @@ class GNNModel(nn.Module):
             return F.cross_entropy(pred[mask], data.y[mask]) # expects [N, C]
         
         elif self.task == "graph":
-            # use flat prediction tensor and casted targets 
-            return F.binary_cross_entropy_with_logits(pred.view(-1), data.y.float()) 
+            if pred.shape[1] > 1: # multiclass
+                return F.cross_entropy(pred, data.y) 
+            else: # binary
+                # use flat prediction tensor and casted targets 
+                logits = pred.view(-1) 
+                return F.binary_cross_entropy_with_logits(logits, data.y.float()) 
         else:
             raise ValueError(f"Unsupported task type: {self.task}")

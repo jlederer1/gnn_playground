@@ -8,3 +8,4 @@ logs/
 data/
 trash.py
 trash.ipynb
+**/new_experiment*.yaml

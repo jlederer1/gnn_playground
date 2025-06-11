@@ -23,6 +23,8 @@ def main():
     if args.config is None:
         # find all .yaml in configs/ and choose the newest by last modification time
         files = glob.glob("configs/*.yaml")
+        if not files: # execution from notebook level (TODO: refactor)
+            files = glob.glob("../configs/*.yaml")
         args.config = max(files, key=os.path.getmtime)
         print(f"Using latest config: {args.config}")
 
@@ -30,7 +32,7 @@ def main():
     if args.tui:
         # Construct config from TUI
         from utils.tui import run_tui
-        config = run_tui()  # needs to return same dict as load_config
+        config = run_tui() # needs to return same dict as load_config
         # Sanity
         if config is None:
             print("TUI cancelled. No config returned.")
@@ -59,7 +61,16 @@ def main():
     
     # MODEL 
     in_dim = train_loader.dataset[0].num_node_features
-    output_dim = data.y.max().item() + 1 if config["data"]["task"] == "node" else 1
+    #output_dim = data.y.max().item() + 1 if config["data"]["task"] == "node" else 1
+    if config["data"]["task"] == "node":
+        output_dim = int(data.y.max()) + 1
+    else:  # graph task
+        num_classes = int(train_loader.dataset.num_classes)
+        if num_classes is None or num_classes == 2:
+            output_dim = 1 # binary
+        else:
+            output_dim = num_classes # multi‐class
+
     model = GNNModel(
         in_dim=in_dim,
         hidden_dim=config["model"]["hidden_dim"],
