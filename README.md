@@ -28,9 +28,10 @@ The repository provides you with 3 alternative to proceed:
 git clone https://github.com/jlederer1/gnn_playground.git
 cd gnn_playground
 # create and activate new environment
-python3 -m venv .venv
-source .venv/bin/activate       # on Linux/MaxOS
-.\.venv\Scrips\activate         # in Windows shell
+python3 -m venv .venv           # on Linux/MaxOS
+source .venv/bin/activate       
+python -m venv .venv            # in Windows shell
+.\.venv\Scrips\activate
 # Install dependancies
 pip install -r requirements.txt
 ```
