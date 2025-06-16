@@ -31,7 +31,7 @@ cd gnn_playground
 python3 -m venv .venv           # on Linux/MaxOS
 source .venv/bin/activate       
 python -m venv .venv            # in Windows shell
-.\.venv\Scrips\activate
+.\.venv\Scripts\activate
 # Install dependancies
 pip install -r requirements.txt
 ```
