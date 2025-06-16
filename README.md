@@ -56,7 +56,6 @@ python gnn_competition.py --config configs/example.yaml
 python gnn_competition.py --tui
 ```
 Note: The TUI is not supported for jupyter notebook.
-After completion you can check `certificates/` to view a summary of the results of your interactions :)
 
 ---
 
