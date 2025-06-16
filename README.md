@@ -1,7 +1,7 @@
 # GNN-Playground
 
 This is a **hands-on sandbox** for experimenting with Graph Neural Networks (GNNs) on tiny cpu-friendly datasets.
-You can customize architecture and training hyperparameters in a single YAML file and then compare two models side-by-side. 
+You can customize architecture and training hyperparameters in a single YAML file. 
 The repository provides you with 3 alternative to proceed:
 
 - **Jupyter Notebook** (`notebooks/playground.ipynb`)
@@ -14,7 +14,7 @@ The repository provides you with 3 alternative to proceed:
 - **Three small datasets** (MUTAG, ENZYME & KarateClub) for graph and node-based prediction tasks.
 - **Multiple layer types**: GCN, GAT, GraphSAGE, GIN
 - **Live plots** of loss and accuracy
-- **PDF certificates** summarizing your interactions with the demo and results.
+- **PDF certificates** summarizing your interactions with the demo and results (TODO).
 - **CPU-only** (supports `cpu`, `cuda` or `mps`)
 - **Few dependancies** (PyTorch, PyG, pyyaml, matplotlib, textual, livelossplot, rich, fpdf2)
 
@@ -43,7 +43,7 @@ jupyter notebook notebooks/playground.ipynb
 ```bash
 # copies example config and creates new_experiment_XX.yaml
 python utils/new_experiment.py 
-# then adjust hyperparameters like dataset, task, layers, lr, etc.
+# then adjust hyperparameters like dataset, task, layers, lr, etc. manually or run the tui.
 ```
 4. **Run via Command Line Interface (CLI)**
 ```bash
