@@ -18,8 +18,8 @@ model:
   layer_type: GIN         # GCN | GAT | GraphSAGE | GIN
   aggregator: mean        # mean | sum | max (only for GraphSAGE)
   update_func: BLSTM      # MLP  | BLSTM (only for GIN)                   (TODO: add Attention)
-  glob_pooler: sum        # mean | add | max (only for graph tasks)
-  activation: leaky_relu  # relu | leaky_relu | sigmoid | tanh | default (according to original papers)
+  glob_pooler: add        # mean | add | max (only for graph tasks)
+  activation: relu  # relu | leaky_relu | sigmoid | tanh | default (according to original papers)
 
 optimizer: 
   type: Adam              # Adam | SGD 
@@ -29,4 +29,4 @@ optimizer:
 training:
   batch_size: 32
   epochs: 100
-  val_split: 0.5 
+  val_split: 0.8

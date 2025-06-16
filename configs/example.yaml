@@ -18,7 +18,7 @@ model:
   layer_type: GCN         # GCN | GAT | GraphSAGE | GIN
   aggregator: mean        # mean | sum | max (only for GraphSAGE)
   update_func: MLP        # MLP  | BLSTM (only for GIN)                   (TODO: add Attention)
-  glob_pooler: sum        # mean | add | max (for graph tasks)
+  glob_pooler: add        # mean | add | max (for graph tasks)
   activation: default     # relu | leaky_relu | sigmoid | tanh | default (according to original papers)
 
 optimizer: 
