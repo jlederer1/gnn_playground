@@ -148,14 +148,14 @@ class TUIInterface(App):
             # Dataset and Task selection
             with Horizontal():
                 yield Static("Dataset:", classes="static")
-                yield Select(options=self.datasets, prompt="Dataset:", id="pick_dataset", classes="label")
+                yield Select(options=self.datasets, prompt="Dataset:", allow_blank=False, id="pick_dataset", classes="label")
                 yield Static("Task:", classes="static")
-                yield Select(options=self.tasks, prompt="Task:", id="pick_task", classes="label")
+                yield Select(options=self.tasks, prompt="Task:", allow_blank=False, id="pick_task", classes="label")
 
             # Device and Seed selection
             with Horizontal():
                 yield Static("Device:", classes="static")
-                yield Select(options=self.devices, prompt="Device:", id="pick_device", classes="label")
+                yield Select(options=self.devices, prompt="Device:", allow_blank=False, id="pick_device", classes="label")
                 yield Static("Random Seed:", classes="static")
                 yield Input(value=str(self.config["data"]["random_seed"]), id="pick_seed", classes="unit")
             
@@ -171,24 +171,24 @@ class TUIInterface(App):
             # Layer type specifications
             with Horizontal():
                 yield Static("Layer Type:", classes="static")
-                yield Select(options=self.layer_types, prompt="Layer Type:", id="pick_layer_type", classes="label")
+                yield Select(options=self.layer_types, prompt="Layer Type:", allow_blank=False, id="pick_layer_type", classes="label")
                 
                 yield Static("Aggregator:", classes="static")
-                yield Select(options=self.aggregators, prompt="Aggregator:", id="pick_aggregator", classes="label")
+                yield Select(options=self.aggregators, prompt="Aggregator:", allow_blank=False, id="pick_aggregator", classes="label")
                 yield Static("Update Func:", classes="static")
-                yield Select(options=self.update_funcs, prompt="Update func:", id="pick_update_func", classes="label")
+                yield Select(options=self.update_funcs, prompt="Update func:", allow_blank=False, id="pick_update_func", classes="label")
             
             # Pooling and activation
             with Horizontal():
                 yield Static("Glob. Pooler:", classes="static")
-                yield Select(options=self.glob_poolers, prompt="Glob. Pooler:", id="pick_glob_pooler", classes="label")
+                yield Select(options=self.glob_poolers, prompt="Glob. Pooler:", allow_blank=False, id="pick_glob_pooler", classes="label")
                 yield Static("Activation:", classes="static")
-                yield Select(options=self.activations, prompt="Activation:", id="pick_activation", classes="label"    )
+                yield Select(options=self.activations, prompt="Activation:", allow_blank=False, id="pick_activation", classes="label"    )
             
             # Optimizer 
             with Horizontal():
                 yield Static("Optimizer:", classes="static")
-                yield Select(options=self.optimizers, prompt="Optimizer:", id="pick_optimizer", classes="label")
+                yield Select(options=self.optimizers, prompt="Optimizer:", allow_blank=False, id="pick_optimizer", classes="label")
                 yield Static("Learning Rate:", classes="static")
                 yield Input(value=str(self.config["optimizer"]["lr"]), id="pick_lr", classes="unit")
                 yield Static("Weight Decay:", classes="static")
@@ -247,15 +247,22 @@ class TUIInterface(App):
         self.active_key = ID2KEY[event.select.id] # highlight line in yaml preview
         if event.select.id == "pick_dataset":
             self.config["data"]["name"] = event.value
-            # align tasks and datasets for KarateClub and MUTAG
+            # align tasks and datasets for KarateClub, MUTAG, ENZYMES
             if event.value == "KarateClub":
                 self.config["data"]["task"] = "node"
-                self.query_one("#pick_task").value = "node"
-            elif event.value == "MUTAG":
+                #self.query_one("#pick_task").value = "node"
+            elif event.value in ["MUTAG", "ENZYMES"]:
                 self.config["data"]["task"] = "graph"
-                self.query_one("#pick_task").value = "graph"
+                #self.query_one("#pick_task").value = "graph"
         elif event.select.id == "pick_task":
             self.config["data"]["task"] = event.value
+            # align datasets with task type
+            if event.value == "node" and self.config["data"]["name"] != "KarateClub":
+                self.config["data"]["name"] = "KarateClub"
+                #self.query_one("#pick_dataset").value = "KarateClub"
+            elif event.value == "graph" and self.config["data"]["name"] == "KarateClub":
+                self.config["data"]["name"] = "MUTAG"
+                #self.query_one("#pick_dataset").value = "MUTAG"
         # Device and Seed selection
         elif event.select.id == "pick_device":
             self.config["data"]["device"] = event.value
